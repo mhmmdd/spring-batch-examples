@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    env_file: ./.env
+    container_name: 'mysql'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQLDB_DATABASE}
+    ports:
+      - "${MYSQLDB_PORT}:${MYSQLDB_PORT}"
+    volumes:
+      - db:/var/lib/mysql
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+#    volumes:
+#      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+#      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
+
+volumes:
+  db:
